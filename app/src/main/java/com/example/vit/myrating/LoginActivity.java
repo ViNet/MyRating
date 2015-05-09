@@ -92,7 +92,7 @@ public class LoginActivity extends ActionBarActivity implements WorkerFragment.C
     @Override
     public void onConnectTaskResult(int resultCode) {
         Toast.makeText(this, "Receive result + " + resultCode, Toast.LENGTH_SHORT).show();
-/*
+
         switch (resultCode){
             case WorkerFragment.RESULT_OK:
                 startActivity(new Intent(this, MainActivity.class).
@@ -102,7 +102,7 @@ public class LoginActivity extends ActionBarActivity implements WorkerFragment.C
             default:
                 break;
         }
-        */
+
     }
 }
 

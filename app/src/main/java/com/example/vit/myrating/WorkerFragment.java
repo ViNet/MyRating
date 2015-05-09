@@ -155,8 +155,8 @@ public class WorkerFragment extends Fragment {
                         String page = EntityUtils.toString(response.getEntity());
                         Log.d(TAG, CLASS + "succes signIn");
 
-                        //saveToSharedPreference("currentUser" ,page);
-                        ParserUtils.parsePage(page);
+
+                        SharedPreferenceHelper.saveToSharedPreference(getActivity(), ParserUtils.parsePage(page));
                         return RESULT_OK;
                     } else {
                         // wrong login or pass
@@ -185,17 +185,6 @@ public class WorkerFragment extends Fragment {
             isWorking=false;
             callback.onConnectTaskResult(resultCode);
         }
-
-        private void saveToSharedPreference(String key, String data){
-            SharedPreferences preferences = getActivity().
-                    getSharedPreferences(key, Context.MODE_PRIVATE);
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("page",data);
-            editor.apply();
-        }
-
-
     }
 
     public interface ConnectTaskCallback{

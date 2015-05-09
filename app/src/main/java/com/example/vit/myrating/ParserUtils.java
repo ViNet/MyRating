@@ -28,7 +28,7 @@ public class ParserUtils {
     static final int NUM_OF_MODULE_FIELDS = 3;
 
     //input argument page - html page downloaded from wev
-    public static void parsePage(String page) {
+    public static List<Subject> parsePage(String page) {
 
         Document doc = Jsoup.parse(page);
 
@@ -93,8 +93,11 @@ public class ParserUtils {
 
         }
 
+        /*
         for(Subject subject : subjects){
             subject.print();
         }
+        */
+        return subjects;
     }
 }
