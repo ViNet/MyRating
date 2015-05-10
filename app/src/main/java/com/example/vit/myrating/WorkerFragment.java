@@ -48,12 +48,16 @@ public class WorkerFragment extends Fragment {
     static final int RESULT_OK = 1;
     static final int RESULT_WRONG_PASS = 2;
     static final int RESULT_SERVER_NOT_RESPOND = 3;
-    //static final int RESULT_WR
+    static final int RESULT_ERROR = 4;
 
     ConnectTaskCallback callback;
 
     private boolean isWorking = false;
 
+
+    public interface ConnectTaskCallback{
+        void onConnectTaskResult(int resultCode);
+    }
 
     public WorkerFragment() {
         // Required empty public constructor
@@ -82,7 +86,7 @@ public class WorkerFragment extends Fragment {
 
         if(!isWorking){
             if(isNetworkConnected()){
-                new ConnectTask().execute();
+                new ConnectTask().execute(login, pass);
                 isWorking = true;
             } else {
                 // send result NO_INTERNET_ACCESS
@@ -102,7 +106,7 @@ public class WorkerFragment extends Fragment {
         return ni != null;
     }
 
-    public class ConnectTask extends AsyncTask<Void, Void, Integer>{
+    public class ConnectTask extends AsyncTask<String, Void, Integer>{
 
         static final String URL = "http://mod.tanet.edu.te.ua/site/login";
         static final String URL2 = "http://mod.tanet.edu.te.ua/ratings/index";
@@ -112,10 +116,32 @@ public class WorkerFragment extends Fragment {
         static final String SUBMIT_INPUT_ID = "yt0";
 
         @Override
-        protected Integer doInBackground(Void... params) {
+        protected Integer doInBackground(String... params) {
             Log.d(TAG, CLASS + " doInBackground()");
 
+            Integer operationResult = null;
 
+            if(params != null){
+                // login attempt
+                // input arguguments are login and pass
+                operationResult = executePostRequest(params[0], params[1]);
+            } else {
+                // update request
+            }
+
+
+            return operationResult;
+        }
+
+        @Override
+        protected void onPostExecute(Integer resultCode) {
+            super.onPostExecute(resultCode);
+            isWorking=false;
+            callback.onConnectTaskResult(resultCode);
+        }
+
+        // used for login
+        private int executePostRequest(String login, String pass){
             // Create a new HttpClient and Post Header
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(URL);
@@ -125,12 +151,11 @@ public class WorkerFragment extends Fragment {
             // Bind custom cookie store to the local context
             context.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 
-
             try {
                 // Add your data
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
-                nameValuePairs.add(new BasicNameValuePair(USERNAME_INPUT_ID, "netetskiym"));
-                nameValuePairs.add(new BasicNameValuePair(PASS_INPUT_ID, "25032503"));
+                nameValuePairs.add(new BasicNameValuePair(USERNAME_INPUT_ID, login));
+                nameValuePairs.add(new BasicNameValuePair(PASS_INPUT_ID, pass));
                 nameValuePairs.add(new BasicNameValuePair(REMEMBER_INPUT_ID, "0"));
                 nameValuePairs.add(new BasicNameValuePair(SUBMIT_INPUT_ID, "”‚≥ÈÚË"));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -154,9 +179,8 @@ public class WorkerFragment extends Fragment {
                         // sign in success
                         String page = EntityUtils.toString(response.getEntity());
                         Log.d(TAG, CLASS + "succes signIn");
-
-
-                        SharedPreferenceHelper.saveToSharedPreference(getActivity(), ParserUtils.parsePage(page));
+                        SharedPreferenceHelper.storeCookies(getActivity(), cookieStore.getCookies());
+                        SharedPreferenceHelper.storeSubjectList(getActivity(), ParserUtils.parsePage(page));
                         return RESULT_OK;
                     } else {
                         // wrong login or pass
@@ -175,19 +199,9 @@ public class WorkerFragment extends Fragment {
             } finally {
                 httpclient.getConnectionManager().closeExpiredConnections();
             }
-
-            return null;
+            return RESULT_ERROR;
         }
 
-        @Override
-        protected void onPostExecute(Integer resultCode) {
-            super.onPostExecute(resultCode);
-            isWorking=false;
-            callback.onConnectTaskResult(resultCode);
-        }
     }
 
-    public interface ConnectTaskCallback{
-        void onConnectTaskResult(int resultCode);
-    }
 }
