@@ -10,7 +10,7 @@ import android.view.MenuItem;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements SubjectList.OnListFragmentInteractionListener {
 
     static final String TAG = "myrating";
     static final String CLASS = MainActivity.class.getSimpleName() + ": ";
@@ -52,5 +52,15 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Subject subject) {
+        Log.d(TAG, CLASS + " pos= " + subject.getTitle());
+        //start detail activity
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+        intent.putExtra("subject", subject);
+        startActivity(intent);
+
     }
 }

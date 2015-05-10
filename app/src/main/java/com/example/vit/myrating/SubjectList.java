@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -23,14 +24,32 @@ public class SubjectList extends ListFragment {
     static final String TAG = "myrating";
     static final String CLASS = SubjectList.class.getSimpleName() + ": ";
 
-    private OnFragmentInteractionListener mListener;
+    private OnListFragmentInteractionListener mListener;
     private List<Subject> subjects;
 
-
-
-    public interface OnFragmentInteractionListener {
+    public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Subject subject);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try{
+            mListener = (OnListFragmentInteractionListener) activity;
+        } catch(ClassCastException e) {
+            throw new ClassCastException(activity.toString() +
+                    "must implement OnListFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        mListener.onFragmentInteraction((Subject)getListAdapter().getItem(position));
+        Log.d(TAG, CLASS + "click on " + position);
     }
 
     @Override
@@ -38,11 +57,10 @@ public class SubjectList extends ListFragment {
         super.onActivityCreated(savedInstanceState);
 
         subjects =
-                SharedPreferenceHelper.getFromSharedPreference(getActivity().getBaseContext());
+                SharedPreferenceHelper.getSubjectList(getActivity().getBaseContext());
         SubjectsAdapter adapter = new SubjectsAdapter(getActivity().getBaseContext(), subjects);
         setListAdapter(adapter);
     }
-
 
     class SubjectsAdapter extends BaseAdapter{
 
@@ -91,6 +109,10 @@ public class SubjectList extends ListFragment {
             Subject subject = getSubject(position);
 
             ((TextView) view.findViewById(R.id.tvSubjectTitle)).setText(subject.getTitle());
+            ((TextView) view.findViewById(R.id.tvSubjectType)).setText(subject.getType());
+            ((TextView) view.findViewById(R.id.tvSubjectTotalMark)).setText(subject.getTotalMark());
+            ((TextView) view.findViewById(R.id.tvSubjectCompletedModules))
+                    .setText(subject.getCompletedModulesNum() + "/" + subject.getModulesNum());
             return view;
         }
     }

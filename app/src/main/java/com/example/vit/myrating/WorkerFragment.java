@@ -178,7 +178,7 @@ public class WorkerFragment extends Fragment {
                     if(!currentUrl.equals(URL)){
                         // sign in success
                         String page = EntityUtils.toString(response.getEntity());
-                        Log.d(TAG, CLASS + "succes signIn");
+                        Log.d(TAG, CLASS + "success signIn");
                         SharedPreferenceHelper.storeCookies(getActivity(), cookieStore.getCookies());
                         SharedPreferenceHelper.storeSubjectList(getActivity(), ParserUtils.parsePage(page));
                         return RESULT_OK;
