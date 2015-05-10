@@ -1,5 +1,7 @@
 package com.example.vit.myrating;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
  * Created by Vit on 09.05.2015.
  * Class used for saved parsed html data in comfortable structure
  */
-public class Subject {
+public class Subject implements Parcelable {
 
     static final String TAG = "myrating";
     static final String CLASS = Subject.class.getSimpleName() + ": ";
@@ -32,16 +34,32 @@ public class Subject {
 
 
     private boolean isCompleted(){
+        return (getCompletedModulesNum() == modules.size());
+    }
+
+    public String getTitle(){
+        return this.title;
+    }
+
+    public String getType(){
+        return this.type;
+    }
+
+    public String getTotalMark(){
+        return this.totalMark;
+    }
+
+    public int getModulesNum(){
+        return modules.size();
+    }
+
+    public int getCompletedModulesNum(){
         int completedModules = 0;
         for(int i=0; i<modules.size(); i++){
             if(!modules.get(i).mark.isEmpty())
                 completedModules++;
         }
-        return (completedModules == modules.size());
-    }
-
-    public String getTitle(){
-        return this.title;
+        return completedModules;
     }
 
     // for debug
@@ -56,7 +74,45 @@ public class Subject {
         }
     }
 
-    public static class Module{
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.title);
+        dest.writeString(this.type);
+        dest.writeInt(this.semester);
+        dest.writeList(this.modules);
+        dest.writeInt((this.isCompleted ? 1 : 0));
+        dest.writeString(totalMark);
+    }
+
+    private Subject(Parcel in){
+        this.title = in.readString();
+        this.type = in.readString();
+        this.semester = in.readInt();
+        this.modules = new ArrayList<Module>();
+        this.modules = in.readArrayList(Module.class.getClassLoader());
+        this.isCompleted = (in.readInt() == 1);
+        this.totalMark = in.readString();
+    }
+
+    public static final Parcelable.Creator<Subject> CREATOR = new Parcelable.Creator<Subject>() {
+
+        @Override
+        public Subject createFromParcel(Parcel source) {
+            return new Subject(source);
+        }
+
+        @Override
+        public Subject[] newArray(int size) {
+            return new Subject[size];
+        }
+    };
+
+    public static class Module implements Parcelable{
         String percentage;
         String date;
         String mark;
@@ -71,5 +127,38 @@ public class Subject {
         public void print(){
             Log.d(TAG, CLASS + "p=" + percentage + ", d=" + date + ", m=" + mark);
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(percentage);
+            dest.writeString(date);
+            dest.writeString(mark);
+        }
+
+        public static final Parcelable.Creator<Module> CREATOR = new Parcelable.Creator<Module>() {
+
+            @Override
+            public Module createFromParcel(Parcel source) {
+                return new Module(source);
+            }
+
+            @Override
+            public Module[] newArray(int size) {
+                return new Module[size];
+            }
+        };
+
+        Module(Parcel in){
+            percentage = in.readString();
+            date = in.readString();
+            mark = in.readString();
+        }
+
+
     }
 }
