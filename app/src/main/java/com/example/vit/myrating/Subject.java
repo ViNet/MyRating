@@ -40,6 +40,10 @@ public class Subject {
         return (completedModules == modules.size());
     }
 
+    public String getTitle(){
+        return this.title;
+    }
+
     // for debug
     public void print(){
         Log.d(TAG, CLASS + "title: " + this.title);

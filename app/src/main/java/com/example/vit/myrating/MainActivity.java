@@ -14,17 +14,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        List<Subject> subjects = SharedPreferenceHelper.getFromSharedPreference(getBaseContext());
-
-        // dubug
-        if(subjects != null){
-            for(int i=0; i < subjects.size(); i++){
-                subjects.get(i).print();
-            }
-        }
-
-
     }
 
 
