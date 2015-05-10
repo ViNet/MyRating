@@ -91,4 +91,12 @@ public class SharedPreferenceHelper {
                 getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
         return preferences.contains(KEY_COOKIES);
     }
+
+    static public void deleteCurrentUser(Context context){
+        SharedPreferences preferences = context.
+                getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+    }
 }
