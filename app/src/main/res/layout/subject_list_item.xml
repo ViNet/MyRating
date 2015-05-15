@@ -67,5 +67,5 @@
             android:text="4/4"
             android:textAppearance="?android:textAppearanceSmall"/>
 
-        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

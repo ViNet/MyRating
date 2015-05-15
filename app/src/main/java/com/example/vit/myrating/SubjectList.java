@@ -29,7 +29,7 @@ public class SubjectList extends ListFragment {
 
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Subject subject);
+        void onFragmentInteraction(int position);
     }
 
     @Override
@@ -48,18 +48,33 @@ public class SubjectList extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        mListener.onFragmentInteraction((Subject)getListAdapter().getItem(position));
+        mListener.onFragmentInteraction(position);
         Log.d(TAG, CLASS + "click on " + position);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        subjects =
-                SharedPreferenceHelper.getSubjectList(getActivity().getBaseContext());
-        SubjectsAdapter adapter = new SubjectsAdapter(getActivity().getBaseContext(), subjects);
-        setListAdapter(adapter);
+        Log.d(TAG, CLASS + "onActivityCreated()");
+
+        if(subjects == null){
+            subjects =
+                    SharedPreferenceHelper.getSubjectList(getActivity().getBaseContext());
+            SubjectsAdapter adapter = new SubjectsAdapter(getActivity().getBaseContext(), subjects);
+            setListAdapter(adapter);
+        }
+
+    }
+
+    public Subject getSubject(int position){
+        return (Subject) getListAdapter().getItem(position);
     }
 
     class SubjectsAdapter extends BaseAdapter{

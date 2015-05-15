@@ -6,8 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.util.List;
+import android.widget.ListView;
 
 
 public class MainActivity extends ActionBarActivity implements SubjectList.OnListFragmentInteractionListener {
@@ -15,10 +14,38 @@ public class MainActivity extends ActionBarActivity implements SubjectList.OnLis
     static final String TAG = "myrating";
     static final String CLASS = MainActivity.class.getSimpleName() + ": ";
 
+    boolean twoPane = false;
+    // selected item position in subject list (for two-pane layout)
+    private int currentPosition = ListView.INVALID_POSITION;
+
+    private String KEY_CURRENT_POSITION = "currentPosition";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_layout);
+        Log.d(TAG, CLASS + "onCreate()");
+
+        twoPane = getResources().getBoolean(R.bool.has_two_panes);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, CLASS + "onStart()");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, CLASS + "onResume()");
+        if(twoPane && currentPosition == ListView.INVALID_POSITION){
+            showDetails(0);
+        } else if (twoPane && currentPosition != ListView.INVALID_POSITION) {
+            showDetails(currentPosition);
+        }
     }
 
 
@@ -55,12 +82,51 @@ public class MainActivity extends ActionBarActivity implements SubjectList.OnLis
     }
 
     @Override
-    public void onFragmentInteraction(Subject subject) {
-        Log.d(TAG, CLASS + " pos= " + subject.getTitle());
-        //start detail activity
-        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-        intent.putExtra("subject", subject);
-        startActivity(intent);
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.d(TAG, CLASS + "onSaveInstanceState()");
+        // Save selected position
+        savedInstanceState.putInt(KEY_CURRENT_POSITION, currentPosition);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d(TAG, CLASS + "onRestoreInstanceState");
+        // Check whether we're recreating a previously destroyed instance
+        if (savedInstanceState != null) {
+            currentPosition = savedInstanceState.getInt(KEY_CURRENT_POSITION);
+        } else {
+            // Probably initialize members with default values for a new instance
+            currentPosition=0;
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(int position) {
+        Log.d(TAG, CLASS + " position = " + position);
+        if(twoPane && currentPosition != position){
+            // show fragment
+            showDetails(position);
+        } else{
+            //start detail activity
+            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+            intent.putExtra("subject", getSubject(position));
+            startActivity(intent);
+        }
+        currentPosition = position;
+    }
+
+    private void showDetails(int position){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.subject_detail_container,
+                        DetailFragment.newInstance(getSubject(position)))
+                .commit();
+    }
+
+    private Subject getSubject(int position){
+        return ((SubjectList) getSupportFragmentManager().
+                findFragmentById(R.id.fragment_list_subject)).getSubject(position);
     }
 }
