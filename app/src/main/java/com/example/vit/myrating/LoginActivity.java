@@ -58,9 +58,9 @@ public class LoginActivity extends AppCompatActivity implements WorkerFragment.C
                 final String password = etPassword.getText().toString();
 
                 Log.d(TAG, CLASS + "onSignInClick() userName/Pass = " + userName + "/" + password);
-                if(isDataValid()){
+                if (isDataValid()) {
                     //attempt to log in
-                    if(workerFragment != null){
+                    if (workerFragment != null) {
                         workerFragment.loginAttempt(userName, password);
                     } else {
                         Log.d(TAG, CLASS + " NULL ");
@@ -80,15 +80,26 @@ public class LoginActivity extends AppCompatActivity implements WorkerFragment.C
         return !isUserNameValid && !isPasswordValid;
     }
 
+    private void showToastMessage(String message){
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onConnectTaskResult(int resultCode) {
-        Toast.makeText(this, "Receive result + " + resultCode, Toast.LENGTH_SHORT).show();
-
         switch (resultCode){
             case WorkerFragment.RESULT_OK:
                 startActivity(new Intent(this, MainActivity.class).
                         setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                 finish();
+                break;
+            case WorkerFragment.RESULT_NO_INTERNET_ACCESS:
+                showToastMessage(getString(R.string.no_internet_access));
+                break;
+            case WorkerFragment.RESULT_WRONG_PASS:
+                showToastMessage(getString(R.string.wrong_login_pass));
+                break;
+            case WorkerFragment.RESULT_ERROR:
+                showToastMessage(getString(R.string.no_internet_access));
                 break;
             default:
                 break;

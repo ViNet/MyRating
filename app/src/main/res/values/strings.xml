@@ -1,12 +1,17 @@
 <resources>
-    <string name="app_name">MyRating</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">My Rating</string>
 
     <!-- MAIN ACTIVITY MENU -->
     <string name="action_logout">Logout</string>
     <string name="action_settings">Settings</string>
 
     <string name="title_activity_login">LoginActivity</string>
+
+    <!-- Connection results strings -->
+    <string name="no_internet_access">No Internet access</string>
+    <string name="server_not_respond">Server not respond</string>
+    <string name="wrong_login_pass">Wrong login or password</string>
+    <string name="error">Error. Can\'t load data</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="title_activity_main">MainActivity</string>
