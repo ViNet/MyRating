@@ -3,6 +3,7 @@ package com.example.vit.myrating;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
-public class LoginActivity extends ActionBarActivity implements WorkerFragment.ConnectTaskCallback{
+public class LoginActivity extends AppCompatActivity implements WorkerFragment.ConnectTaskCallback{
 
     static final String TAG = "myrating";
     static final String CLASS = "LoginActivity: ";
@@ -42,11 +43,7 @@ public class LoginActivity extends ActionBarActivity implements WorkerFragment.C
         }else {
             workerFragment = (WorkerFragment) getSupportFragmentManager().findFragmentByTag(FR_WORKER_TAG);
         }
-
-
         initUI();
-
-
     }
 
     public void initUI(){
@@ -63,10 +60,9 @@ public class LoginActivity extends ActionBarActivity implements WorkerFragment.C
 
                 Log.d(TAG, CLASS + "onSignInClick() userName/Pass = " + userName + "/" + password);
                 if(isDataValid()){
-                    Log.d(TAG, CLASS + "blasba");
-                    //attempt to sign in
+                    //attempt to log in
                     if(workerFragment != null){
-                        workerFragment.signInAttempt(userName, password);
+                        workerFragment.loginAttempt(userName, password);
                     } else {
                         Log.d(TAG, CLASS + " NULL ");
                     }
@@ -77,10 +73,6 @@ public class LoginActivity extends ActionBarActivity implements WorkerFragment.C
             }
         });
     }
-
-
-
-
 
     private boolean isDataValid(){
         boolean isUserNameValid = etUserName.getText().toString().isEmpty();

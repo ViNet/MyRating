@@ -3,13 +3,16 @@ package com.example.vit.myrating;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity implements SubjectList.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements SubjectList.OnListFragmentInteractionListener,
+WorkerFragment.ConnectTaskCallback{
 
     static final String TAG = "myrating";
     static final String CLASS = MainActivity.class.getSimpleName() + ": ";
@@ -20,11 +23,24 @@ public class MainActivity extends ActionBarActivity implements SubjectList.OnLis
 
     private String KEY_CURRENT_POSITION = "currentPosition";
 
+    WorkerFragment workerFragment;
+    static final  String FR_WORKER_TAG = "fragment_worker_tag";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
         Log.d(TAG, CLASS + "onCreate()");
+
+        if(savedInstanceState == null){
+            workerFragment = new WorkerFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(workerFragment, FR_WORKER_TAG)
+                    .commit();
+        }else {
+            workerFragment = (WorkerFragment) getSupportFragmentManager().findFragmentByTag(FR_WORKER_TAG);
+        }
 
         twoPane = getResources().getBoolean(R.bool.has_two_panes);
     }
@@ -103,8 +119,20 @@ public class MainActivity extends ActionBarActivity implements SubjectList.OnLis
         }
     }
 
+    private void showDetails(int position){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.subject_detail_container,
+                        DetailFragment.newInstance(getSubject(position)))
+                .commit();
+    }
+
+    private Subject getSubject(int position){
+        return ((SubjectList) getSupportFragmentManager().
+                findFragmentById(R.id.fragment_list_subject)).getSubject(position);
+    }
+
     @Override
-    public void onFragmentInteraction(int position) {
+    public void onListItemClick(int position) {
         Log.d(TAG, CLASS + " position = " + position);
         if(twoPane && currentPosition != position){
             // show fragment
@@ -118,15 +146,27 @@ public class MainActivity extends ActionBarActivity implements SubjectList.OnLis
         currentPosition = position;
     }
 
-    private void showDetails(int position){
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.subject_detail_container,
-                        DetailFragment.newInstance(getSubject(position)))
-                .commit();
+    @Override
+    public void onSwipeRefresh(){
+        Log.d(TAG, CLASS + "onSwipeRefresh()");
+
+        workerFragment.updateAttempt();
+
     }
 
-    private Subject getSubject(int position){
-        return ((SubjectList) getSupportFragmentManager().
-                findFragmentById(R.id.fragment_list_subject)).getSubject(position);
+    @Override
+    public void onConnectTaskResult(int resultCode) {
+        Log.d(TAG, CLASS + "onConnectTaskResult");
+        Toast.makeText(this, "result - " + resultCode, Toast.LENGTH_SHORT).show();
+
+        switch (resultCode){
+            case WorkerFragment.RESULT_OK:
+                Log.d(TAG, CLASS + "Success update");
+                ((SubjectList) getSupportFragmentManager().
+                        findFragmentById(R.id.fragment_list_subject)).updateData();
+                break;
+            default:
+                break;
+        }
     }
 }
