@@ -33,6 +33,15 @@ WorkerFragment.ConnectTaskCallback{
         setContentView(R.layout.main_layout);
         Log.d(TAG, CLASS + "onCreate()");
 
+        // check if user data exist.
+        if(!SharedPreferenceHelper.isCookieExist(getBaseContext())) {
+            // if no stored cookie then go to login activity
+            startActivity(
+                    new Intent(MainActivity.this, LoginActivity.class).
+                            setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
+            );
+        }
+
         if(savedInstanceState == null){
             workerFragment = new WorkerFragment();
             getSupportFragmentManager().beginTransaction()

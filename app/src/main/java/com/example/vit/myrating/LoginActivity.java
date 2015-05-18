@@ -28,7 +28,6 @@ public class LoginActivity extends AppCompatActivity implements WorkerFragment.C
     EditText etPassword;
     Button btnSignIn;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

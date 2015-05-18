@@ -133,8 +133,6 @@ public class WorkerFragment extends Fragment {
 
         @Override
         protected Integer doInBackground(String... params) {
-            Log.d(TAG, CLASS + " doInBackground(). patams.length = " + params.length);
-
             Integer operationResult = null;
 
             if(params.length != 0){
@@ -195,7 +193,6 @@ public class WorkerFragment extends Fragment {
                     if(!currentUrl.equals(URL_LOGIN_PAGE)){
                         // sign in success
                         String page = EntityUtils.toString(response.getEntity());
-                        Log.d(TAG, CLASS + "success signIn");
                         List<Cookie> cookies = cookieStore.getCookies();
 
                         SharedPreferenceHelper.storeCookies(getActivity(), cookies.get(0));
@@ -203,11 +200,9 @@ public class WorkerFragment extends Fragment {
                         return RESULT_OK;
                     } else {
                         // wrong login or pass
-                        Log.d(TAG, CLASS + "Wrong login or pass");
                         return RESULT_WRONG_PASS;
                     }
                 } else {
-                    Log.d(TAG, CLASS + "server not respond");
                     return RESULT_SERVER_NOT_RESPOND;
                 }
 
@@ -233,8 +228,6 @@ public class WorkerFragment extends Fragment {
 
             // add coolie to cookieStore from shared preferences
             Cookie cookie = SharedPreferenceHelper.getCookies(getActivity());
-            Log.d(TAG, CLASS + "cookies.size = " + cookie);
-
             cookieStore.addCookie(cookie);
             httpclient.setCookieStore(cookieStore);
 
@@ -255,10 +248,8 @@ public class WorkerFragment extends Fragment {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
             return RESULT_ERROR;
         }
 
     }
-
 }
