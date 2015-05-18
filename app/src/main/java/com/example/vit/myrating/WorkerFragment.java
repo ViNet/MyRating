@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -18,9 +19,11 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -28,6 +31,7 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -82,8 +86,7 @@ public class WorkerFragment extends Fragment {
         }
     }
 
-    public void signInAttempt(String login, String pass){
-
+    public void loginAttempt(String login, String pass){
         if(!isWorking){
             if(isNetworkConnected()){
                 new ConnectTask().execute(login, pass);
@@ -98,8 +101,21 @@ public class WorkerFragment extends Fragment {
         }
     }
 
-    public boolean isNetworkConnected(){
+    public void updateAttempt(){
+        if(!isWorking){
+            if(isNetworkConnected()){
+                new ConnectTask().execute();
+                isWorking = true;
+            } else {
+                // send result NO_INTERNET_ACCESS
+                callback.onConnectTaskResult(RESULT_NO_INTERNET_ACCESS);
+            }
+        } else {
+            Log.d(TAG, CLASS + "workerFragment busy now");
+        }
+    }
 
+    private boolean isNetworkConnected(){
         ConnectivityManager cm = (ConnectivityManager) getActivity()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
@@ -108,8 +124,8 @@ public class WorkerFragment extends Fragment {
 
     public class ConnectTask extends AsyncTask<String, Void, Integer>{
 
-        static final String URL = "http://mod.tanet.edu.te.ua/site/login";
-        static final String URL2 = "http://mod.tanet.edu.te.ua/ratings/index";
+        static final String URL_LOGIN_PAGE = "http://mod.tanet.edu.te.ua/site/login";
+        static final String URL_MAIN_PAGE = "http://mod.tanet.edu.te.ua/ratings/index";
         static final String USERNAME_INPUT_ID = "LoginForm[login]";
         static final String PASS_INPUT_ID = "LoginForm[password]";
         static final String REMEMBER_INPUT_ID = "LoginForm[rememberMe]";
@@ -117,16 +133,17 @@ public class WorkerFragment extends Fragment {
 
         @Override
         protected Integer doInBackground(String... params) {
-            Log.d(TAG, CLASS + " doInBackground()");
+            Log.d(TAG, CLASS + " doInBackground(). patams.length = " + params.length);
 
             Integer operationResult = null;
 
-            if(params != null){
+            if(params.length != 0){
                 // login attempt
                 // input arguguments are login and pass
                 operationResult = executePostRequest(params[0], params[1]);
             } else {
                 // update request
+                operationResult = executeGetRequest();
             }
 
 
@@ -144,7 +161,7 @@ public class WorkerFragment extends Fragment {
         private int executePostRequest(String login, String pass){
             // Create a new HttpClient and Post Header
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(URL);
+            HttpPost httppost = new HttpPost(URL_LOGIN_PAGE);
             // Create a local instance of cookie store
             CookieStore cookieStore = new BasicCookieStore();
             HttpContext context = new BasicHttpContext();
@@ -175,11 +192,13 @@ public class WorkerFragment extends Fragment {
                             .getURI());
 
                     //check if sign is success, if page was redirected than sign in success
-                    if(!currentUrl.equals(URL)){
+                    if(!currentUrl.equals(URL_LOGIN_PAGE)){
                         // sign in success
                         String page = EntityUtils.toString(response.getEntity());
                         Log.d(TAG, CLASS + "success signIn");
-                        SharedPreferenceHelper.storeCookies(getActivity(), cookieStore.getCookies());
+                        List<Cookie> cookies = cookieStore.getCookies();
+
+                        SharedPreferenceHelper.storeCookies(getActivity(), cookies.get(0));
                         SharedPreferenceHelper.storeSubjectList(getActivity(), ParserUtils.parsePage(page));
                         return RESULT_OK;
                     } else {
@@ -199,6 +218,44 @@ public class WorkerFragment extends Fragment {
             } finally {
                 httpclient.getConnectionManager().closeExpiredConnections();
             }
+            return RESULT_ERROR;
+        }
+
+        // used for update data
+        private int executeGetRequest(){
+            // Create a new HttpClient
+            DefaultHttpClient httpclient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(URL_MAIN_PAGE);
+
+            // Create a local instance of cookie store
+            CookieStore cookieStore = new BasicCookieStore();
+            HttpContext context = new BasicHttpContext();
+
+            // add coolie to cookieStore from shared preferences
+            Cookie cookie = SharedPreferenceHelper.getCookies(getActivity());
+            Log.d(TAG, CLASS + "cookies.size = " + cookie);
+
+            cookieStore.addCookie(cookie);
+            httpclient.setCookieStore(cookieStore);
+
+            // Execute HTTP Get Request
+            try {
+                HttpResponse response = httpclient.execute(httpGet);
+
+                if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+                    String page = EntityUtils.toString(response.getEntity());
+                    // save new data to sharedPreferences
+                    Log.d(TAG, CLASS + Jsoup.parse(page).text());
+                    SharedPreferenceHelper.storeSubjectList(getActivity(), ParserUtils.parsePage(page));
+                    return RESULT_OK;
+                } else {
+                    return RESULT_ERROR;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             return RESULT_ERROR;
         }
 
