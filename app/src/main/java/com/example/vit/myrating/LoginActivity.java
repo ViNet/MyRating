@@ -10,8 +10,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -27,6 +31,9 @@ public class LoginActivity extends AppCompatActivity implements WorkerFragment.C
     EditText etUserName;
     EditText etPassword;
     Button btnSignIn;
+
+    ImageView ivUniversityLogo;
+    Animation rotateAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +53,16 @@ public class LoginActivity extends AppCompatActivity implements WorkerFragment.C
     }
 
     public void initUI(){
-
         etUserName = (EditText) findViewById(R.id.etUserName);
         etPassword = (EditText) findViewById(R.id.etPassword);
         btnSignIn = (Button) findViewById(R.id.btnSingIn);
+        ivUniversityLogo = (ImageView) findViewById(R.id.ivUniversityLogo);
+        rotateAnimation = AnimationUtils.loadAnimation(this, R.anim.logo_rotate);
+
+        // continue animation on rotate screen
+        if(workerFragment.isWorking()){
+            ivUniversityLogo.startAnimation(rotateAnimation);
+        }
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +74,9 @@ public class LoginActivity extends AppCompatActivity implements WorkerFragment.C
                 if (isDataValid()) {
                     //attempt to log in
                     if (workerFragment != null) {
+                        // start rotate university logo
+                        ivUniversityLogo.startAnimation(rotateAnimation);
+                        // try to login
                         workerFragment.loginAttempt(userName, password);
                     } else {
                         Log.d(TAG, CLASS + " NULL ");
@@ -68,6 +84,7 @@ public class LoginActivity extends AppCompatActivity implements WorkerFragment.C
 
                 } else {
                     // show error
+                    showToastMessage(getString(R.string.empty_login_pass));
                 }
             }
         });
@@ -86,6 +103,9 @@ public class LoginActivity extends AppCompatActivity implements WorkerFragment.C
 
     @Override
     public void onConnectTaskResult(int resultCode) {
+        //stop rotate university logo
+        ivUniversityLogo.clearAnimation();
+
         switch (resultCode){
             case WorkerFragment.RESULT_OK:
                 startActivity(new Intent(this, MainActivity.class).

@@ -1,6 +1,7 @@
 package com.example.vit.myrating;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -35,11 +36,16 @@ WorkerFragment.ConnectTaskCallback{
 
         // check if user data exist.
         if(!SharedPreferenceHelper.isCookieExist(getBaseContext())) {
+            // delete static fragment
+            Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_list_subject);
+            getSupportFragmentManager().beginTransaction().remove(f).commit();
+
             // if no stored cookie then go to login activity
             startActivity(
                     new Intent(MainActivity.this, LoginActivity.class).
                             setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK)
             );
+            finish();
         }
 
         if(savedInstanceState == null){
