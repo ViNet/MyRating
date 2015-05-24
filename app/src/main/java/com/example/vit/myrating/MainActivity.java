@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
             setSupportActionBar(toolbar);
 
         }
-
     }
 
     @Override

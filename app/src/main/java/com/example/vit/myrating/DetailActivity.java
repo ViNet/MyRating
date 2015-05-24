@@ -8,7 +8,10 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +19,10 @@ import android.view.View;
 import android.view.WindowManager;
 
 
-public class DetailActivity extends ActionBarActivity {
+public class DetailActivity extends AppCompatActivity {
+
+    static final String TAG = "myrating";
+    static final String CLASS = DetailActivity.class.getSimpleName() + ": ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,8 @@ public class DetailActivity extends ActionBarActivity {
             getSupportFragmentManager().beginTransaction().
                     add(R.id.fragment_detail_container, details).commit();
         }
+
+        initToolbar();
     }
 
         private boolean isLargeScreen(){
@@ -52,7 +60,21 @@ public class DetailActivity extends ActionBarActivity {
             float dpWidth  = outMetrics.widthPixels / density;
 
             return (Math.min(dpHeight,dpWidth) >= 600);
+    }
 
+    private void initToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_activity_toolbar);
+        if(toolbar != null){
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, CLASS + "onNavigationClickListener()");
+                    finish();
+                }
+            });
+
+        }
     }
 }
 
