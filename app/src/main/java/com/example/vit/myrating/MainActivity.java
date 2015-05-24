@@ -148,6 +148,10 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
                 findFragmentById(R.id.fragment_main_list)).getSubject(position);
     }
 
+    private void showToastMessage(String message){
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public void onListItemClick(int position) {
         Log.d(TAG, CLASS + " position = " + position);
@@ -172,14 +176,19 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
 
     @Override
     public void onConnectTaskResult(int resultCode) {
-        Log.d(TAG, CLASS + "onConnectTaskResult");
-        Toast.makeText(this, "result - " + resultCode, Toast.LENGTH_SHORT).show();
-
+        MainListFragment fragment = ((MainListFragment) getSupportFragmentManager().
+                findFragmentById(R.id.fragment_main_list));
+        fragment.cancelSwipeRefreshAnimation();
         switch (resultCode){
             case WorkerFragment.RESULT_OK:
-                Log.d(TAG, CLASS + "Success update");
-                ((MainListFragment) getSupportFragmentManager().
-                        findFragmentById(R.id.fragment_main_list)).updateData();
+                showToastMessage(getString(R.string.success_updated));
+                fragment.updateData();
+                break;
+            case WorkerFragment.RESULT_NO_INTERNET_ACCESS:
+                showToastMessage(getString(R.string.no_internet_access));
+                break;
+            case WorkerFragment.RESULT_ERROR:
+                showToastMessage(getString(R.string.error_relogin));
                 break;
             default:
                 break;

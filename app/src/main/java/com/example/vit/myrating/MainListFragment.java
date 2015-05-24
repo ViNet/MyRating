@@ -35,7 +35,6 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
     LinearLayoutManager llm;
 
     public interface OnMainListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListItemClick(int position);
         void onSwipeRefresh();
     }
@@ -92,12 +91,18 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
         swipeRefreshLayout.setRefreshing(true);
         mListener.onSwipeRefresh();
     }
-    public void updateData(){
-        swipeRefreshLayout.setRefreshing(false);
 
+    public void updateData(){
         subjects =
                 SharedPreferenceHelper.getSubjectList(getActivity().getBaseContext());
+        for(Subject s : subjects){
+            s.print();
+        }
         ((RecycleAdapter) rvMainList.getAdapter()).setNewData(subjects);
+    }
+
+    public void cancelSwipeRefreshAnimation(){
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     public Subject getSubject(int position){
