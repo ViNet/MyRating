@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
         }
 
         twoPane = getResources().getBoolean(R.bool.has_two_panes);
+        initToolbar();
     }
 
 
@@ -80,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
         }
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -152,6 +153,15 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
         Toast.makeText(getBaseContext(), message, Toast.LENGTH_SHORT).show();
     }
 
+    private void initToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
+        if(toolbar != null){
+            setSupportActionBar(toolbar);
+
+        }
+
+    }
+
     @Override
     public void onListItemClick(int position) {
         Log.d(TAG, CLASS + " position = " + position);
@@ -171,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
     public void onSwipeRefresh(){
         Log.d(TAG, CLASS + "onSwipeRefresh()");
         workerFragment.updateAttempt();
-
     }
 
     @Override
