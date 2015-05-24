@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,8 +13,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-public class MainActivity extends AppCompatActivity implements SubjectList.OnListFragmentInteractionListener,
-WorkerFragment.ConnectTaskCallback{
+public class MainActivity extends AppCompatActivity implements WorkerFragment.ConnectTaskCallback,
+        MainListFragment.OnMainListFragmentInteractionListener{
 
     static final String TAG = "myrating";
     static final String CLASS = MainActivity.class.getSimpleName() + ": ";
@@ -37,7 +38,7 @@ WorkerFragment.ConnectTaskCallback{
         // check if user data exist.
         if(!SharedPreferenceHelper.isCookieExist(getBaseContext())) {
             // delete static fragment
-            Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_list_subject);
+            Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_main_list);
             getSupportFragmentManager().beginTransaction().remove(f).commit();
 
             // if no stored cookie then go to login activity
@@ -77,6 +78,7 @@ WorkerFragment.ConnectTaskCallback{
         } else if (twoPane && currentPosition != ListView.INVALID_POSITION) {
             showDetails(currentPosition);
         }
+
     }
 
 
@@ -136,14 +138,14 @@ WorkerFragment.ConnectTaskCallback{
 
     private void showDetails(int position){
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.subject_detail_container,
+                .replace(R.id.fragment_detail_container,
                         DetailFragment.newInstance(getSubject(position)))
                 .commit();
     }
 
     private Subject getSubject(int position){
-        return ((SubjectList) getSupportFragmentManager().
-                findFragmentById(R.id.fragment_list_subject)).getSubject(position);
+        return ((MainListFragment) getSupportFragmentManager().
+                findFragmentById(R.id.fragment_main_list)).getSubject(position);
     }
 
     @Override
@@ -164,7 +166,6 @@ WorkerFragment.ConnectTaskCallback{
     @Override
     public void onSwipeRefresh(){
         Log.d(TAG, CLASS + "onSwipeRefresh()");
-
         workerFragment.updateAttempt();
 
     }
@@ -177,8 +178,8 @@ WorkerFragment.ConnectTaskCallback{
         switch (resultCode){
             case WorkerFragment.RESULT_OK:
                 Log.d(TAG, CLASS + "Success update");
-                ((SubjectList) getSupportFragmentManager().
-                        findFragmentById(R.id.fragment_list_subject)).updateData();
+                ((MainListFragment) getSupportFragmentManager().
+                        findFragmentById(R.id.fragment_main_list)).updateData();
                 break;
             default:
                 break;

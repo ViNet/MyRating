@@ -86,6 +86,10 @@ public class WorkerFragment extends Fragment {
         }
     }
 
+    public boolean isWorking(){
+        return isWorking;
+    }
+
     public void loginAttempt(String login, String pass){
         if(!isWorking){
             if(isNetworkConnected()){
