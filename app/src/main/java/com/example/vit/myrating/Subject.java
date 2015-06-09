@@ -21,7 +21,7 @@ public class Subject implements Parcelable {
     private String totalMark;
     private int semester;
     private List<Module> modules;
-    boolean isCompleted;
+    private boolean isCompleted;
 
     Subject(String name, String type, String totalMark, int semester, List<Module> modules){
         this.title = name;
@@ -29,12 +29,16 @@ public class Subject implements Parcelable {
         this.totalMark = totalMark;
         this.semester = semester;
         this.modules = modules;
-        this.isCompleted = this.isCompleted();
+        this.isCompleted = this.checkComplete();
     }
 
 
-    private boolean isCompleted(){
+    private boolean checkComplete(){
         return (getCompletedModulesNum() == modules.size());
+    }
+
+    public boolean isCompleted(){
+        return isCompleted;
     }
 
     public String getTitle(){

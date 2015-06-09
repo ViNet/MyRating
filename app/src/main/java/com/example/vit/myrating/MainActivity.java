@@ -1,17 +1,19 @@
 package com.example.vit.myrating;
 
 import android.content.Intent;
+
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
 import android.widget.Toast;
+
 
 
 public class MainActivity extends AppCompatActivity implements WorkerFragment.ConnectTaskCallback,
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
 
     WorkerFragment workerFragment;
     static final  String FR_WORKER_TAG = "fragment_worker_tag";
+
+    Toolbar toolbar;
 
 
     @Override
@@ -154,10 +158,9 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
     }
 
     private void initToolbar(){
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
         if(toolbar != null){
             setSupportActionBar(toolbar);
-
         }
     }
 
