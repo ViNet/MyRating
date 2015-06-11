@@ -1,23 +1,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
     android:orientation="vertical"
+    android:background="@android:color/white"
     tools:context="com.example.vit.myrating.DetailFragment">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="fonts/Roboto-Black.ttf"
+        android:textAppearance="?android:textAppearanceLarge"
         android:id="@+id/tvDetailTitle"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="right"
+        android:textAppearance="?android:textAppearance"
+        android:paddingTop="10dp"
         android:id="@+id/tvDetailType"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ListView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvDetailTotalMark"/>
+        android:id="@+id/lvModules"
+        android:dividerHeight="10dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:divider="@android:color/transparent"
+        />
 
 </LinearLayout>

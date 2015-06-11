@@ -71,7 +71,7 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
         // set on scroll listener
         rvMainList.addItemDecoration(
                 new HorizontalDividerItemDecoration.Builder(getActivity())
-                        .color(getResources().getColor(R.color.light_grey))
+                        .color(getResources().getColor(R.color.light_grey_divider))
                         .sizeResId(R.dimen.divider)
                         .build()
         );

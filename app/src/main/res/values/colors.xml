@@ -2,12 +2,13 @@
 <resources>
     <color name="light_red">#f35a5c</color>
     <color name="text_hint_grey">#bbbbbb</color>
-    <color name="text_dark_grey">#111122</color>
+    <color name="text_dark_grey">#222233</color>
 
     <!-- Total mark backgrounds -->
     <color name="red">#f44336</color>
 
-    <color name="light_grey">#EEEEEE</color>
+    <color name="light_grey_divider">#EEEEEE</color>
+    <color name="light_grey">#F5F5F5</color>
 
     <color name="pink">#E91E63</color>
     <color name="violet">#9C27B0</color>
