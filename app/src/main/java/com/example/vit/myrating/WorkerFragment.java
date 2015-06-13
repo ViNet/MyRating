@@ -26,6 +26,7 @@ import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.ExecutionContext;
@@ -175,7 +176,7 @@ public class WorkerFragment extends Fragment {
                 List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
                 nameValuePairs.add(new BasicNameValuePair(USERNAME_INPUT_ID, login));
                 nameValuePairs.add(new BasicNameValuePair(PASS_INPUT_ID, pass));
-                nameValuePairs.add(new BasicNameValuePair(REMEMBER_INPUT_ID, "0"));
+                nameValuePairs.add(new BasicNameValuePair(REMEMBER_INPUT_ID, "1"));
                 nameValuePairs.add(new BasicNameValuePair(SUBMIT_INPUT_ID, "”‚≥ÈÚË"));
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -199,7 +200,7 @@ public class WorkerFragment extends Fragment {
                         String page = EntityUtils.toString(response.getEntity());
                         List<Cookie> cookies = cookieStore.getCookies();
 
-                        SharedPreferenceHelper.storeCookies(getActivity(), cookies.get(0));
+                        SharedPreferenceHelper.storeCookies(getActivity(), cookies);
                         SharedPreferenceHelper.storeSubjectList(getActivity(), ParserUtils.parsePage(page));
                         return RESULT_OK;
                     } else {
@@ -231,8 +232,12 @@ public class WorkerFragment extends Fragment {
             HttpContext context = new BasicHttpContext();
 
             // add coolie to cookieStore from shared preferences
-            Cookie cookie = SharedPreferenceHelper.getCookies(getActivity());
-            cookieStore.addCookie(cookie);
+            List<BasicClientCookie> cookies = SharedPreferenceHelper.getCookies(getActivity());
+            for(int i=0; i< cookies.size(); i++){
+                cookieStore.addCookie(cookies.get(i));
+
+            }
+
             httpclient.setCookieStore(cookieStore);
 
             // Execute HTTP Get Request

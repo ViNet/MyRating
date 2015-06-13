@@ -8,7 +8,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.cookie.BasicClientCookie;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -68,58 +70,34 @@ public class SharedPreferenceHelper {
         return subjects;
     }
 
-    static public void storeCookies(Context context, Cookie cookie){
+    static public void storeCookies(Context context, List<Cookie> cookies){
         SharedPreferences preferences = context.
                 getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put(COOKIE_NAME, cookie.getName());
-            jsonObject.put(COOKIE_VALUE, cookie.getValue());
-            jsonObject.put(COOKIE_DOMAIN, cookie.getDomain());
-            jsonObject.put(COOKIE_PATH, cookie.getPath());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        /*
-        String cookieStr = cookie.getName() + " " + cookie.getValue() +
-                " " + cookie.getDomain() + " " + cookie.getPath() + " " + cookie.getExpiryDate();
-                */
+        Gson gson = new Gson();
+        String json = gson.toJson(cookies);
 
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY_COOKIE,jsonObject.toString());
+        editor.putString(KEY_COOKIE,json);
         editor.apply();
         Log.d(TAG, CLASS + " stored cookies in shared preferences");
     }
 
-    static public Cookie getCookies(Context context){
+    static public List<BasicClientCookie> getCookies(Context context){
         // used for retrieving arraylist from json formatted string
-
-        Log.d(TAG, CLASS + "1");
-        BasicClientCookie cookie = null;
         SharedPreferences preferences = context.
                 getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-        String name = "", value = "", domain = "", path = "";
-        Log.d(TAG, CLASS + "2");
-        if(preferences.contains(KEY_COOKIE)){
-            String jsonCookie = preferences.getString(KEY_COOKIE, "0");
-            try {
-                JSONObject jsonObject = new JSONObject(jsonCookie);
-                name = jsonObject.getString(COOKIE_NAME);
-                value = jsonObject.getString((COOKIE_VALUE));
-                domain = jsonObject.getString(COOKIE_DOMAIN);
-                path = jsonObject.getString(COOKIE_PATH);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
-            cookie = new BasicClientCookie(name, value);
-            cookie.setDomain(domain);
-            cookie.setPath(path);
+        List<BasicClientCookie> cookies = null;
+        if(preferences.contains(KEY_COOKIE)){
+            String json = preferences.getString(KEY_COOKIE, null);
+            Gson gson = new Gson();
+            BasicClientCookie[] cookiesArr = gson.fromJson(json, BasicClientCookie[].class);
+            cookies = Arrays.asList(cookiesArr);
+            cookies = new ArrayList<BasicClientCookie>(cookies);
         }
 
         Log.d(TAG, CLASS + " loaded cookies from shared preference");
-        return cookie;
+        return cookies;
     }
 
     static public boolean isCookieExist(Context context){
