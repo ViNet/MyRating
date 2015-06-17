@@ -142,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements WorkerFragment.Co
     }
 
     private void showDetails(int position){
+        if(getSubject(position) == null)
+            return;
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_detail_container,
                         DetailFragment.newInstance(getSubject(position)))

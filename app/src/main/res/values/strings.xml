@@ -24,9 +24,7 @@
     <!-- Main activity layout -->
     <string name="success_updated">Success updated</string>
     <string name="error_relogin">Error with account data. Please relogin</string>
-
-
-<!-- TODO: Remove or change this placeholder text -->
+    
     <string name="title_activity_main">My Rating</string>
     <string name="title_activity_detail">DetailActivity</string>
 
@@ -34,6 +32,10 @@
     <string name="module_percentage" formatted="false"><xliff:g id="percentage">%1$s</xliff:g>%%</string>
     <string name="module_x_num" formatted="false">#<xliff:g id="number">%1$s</xliff:g></string>
     <string name="module_x_contribution" formatted="false">+<xliff:g id="contribution">%1$s</xliff:g></string>
+    
+    <string name="gained">Gained</string>
+    <string name="available">Available</string>
+    <string name="wasted">Wasted</string>
 
 
 </resources>

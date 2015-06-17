@@ -1,6 +1,7 @@
 package com.example.vit.myrating;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,11 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.vit.myrating.view.PieSliceData;
+import com.example.vit.myrating.view.PieChart;
+import com.example.vit.myrating.view.ProgressView;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -47,16 +53,31 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        View rootView = inflater.inflate(R.layout.detail_layout, container, false);
         ((TextView) rootView.findViewById(R.id.tvDetailTitle)).setText(subject.getTitle());
         ((TextView) rootView.findViewById(R.id.tvDetailType)).setText(subject.getType());
         ListView lvModules = (ListView) rootView.findViewById(R.id.lvModules);
+
+        PieChart pieChart = (PieChart) rootView.findViewById(R.id.pieChart);
+
+        List<PieSliceData> pieChartData = new ArrayList<PieSliceData>(3);
+        pieChartData.add(
+                new PieSliceData(getString(R.string.gained), subject.getTotalContributionValue(),
+                        getResources().getColor(R.color.light_blue)));
+        pieChartData.add(
+                new PieSliceData(getString(R.string.available), subject.getAvailableContribution(),
+                        getResources().getColor(R.color.xlight_blue)));
+        pieChartData.add(
+                new PieSliceData(getString(R.string.wasted), subject.getWastedContribution(),
+                        Color.parseColor("#FF4D4D4D")));
+
+        pieChart.setData(pieChartData);
+
 
         ModulesAdapter adapter = new ModulesAdapter(getActivity(), subject.getModules());
         lvModules.setAdapter(adapter);
         return rootView;
     }
-
 
     public class ModulesAdapter extends BaseAdapter {
 

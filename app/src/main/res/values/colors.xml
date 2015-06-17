@@ -19,9 +19,8 @@
     <color name="grey">#607D8B</color>
 
 
-
-
-
+    <color name="light_blue">#64e4ff</color>
+    <color name="xlight_blue">#b5efff</color>
 
 
 </resources>

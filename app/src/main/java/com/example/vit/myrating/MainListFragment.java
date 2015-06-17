@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.OnScrollListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,6 +116,11 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
     public Subject getSubject(int position) {
+        Log.d(TAG, CLASS + "subjects == null" + (subjects == null));
+        Log.d(TAG, CLASS + "subjects.size = " + subjects.size());
+        if(subjects.size() == 0)
+            return null;
+
         return (Subject) subjects.get(position);
     }
 

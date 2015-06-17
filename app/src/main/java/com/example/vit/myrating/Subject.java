@@ -70,6 +70,24 @@ public class Subject implements Parcelable {
         return completedModules;
     }
 
+    public float getTotalContributionValue(){
+        float total = 0;
+        for(int i = 0; i < modules.size(); i++)
+            total += modules.get(i).getContributionValue();
+        return total;
+    }
+
+    public float getAvailableContribution(){
+        float total = 0;
+        for(int i = 0; i < modules.size(); i++)
+            total += modules.get(i).getAvailableContributionValue();
+        return total;
+    }
+
+    public float getWastedContribution(){
+        return 100 - getTotalContributionValue() - getAvailableContribution();
+    }
+
     // for debug
     public void print(){
         Log.d(TAG, CLASS + "title: " + this.title);
@@ -147,6 +165,15 @@ public class Subject implements Parcelable {
             int markValue = Integer.parseInt(this.mark);
             int percentageValue = Integer.parseInt(this.percentage);
             return (markValue * percentageValue)/100.0f;
+        }
+
+        public float getAvailableContributionValue(){
+            if (this.mark.isEmpty() && !this.percentage.isEmpty()){
+                int maxValue = 100;
+                int percentageValue = Integer.parseInt(this.percentage);
+                return (maxValue * percentageValue)/100.0f;
+            }
+            return 0;
         }
 
         @Override

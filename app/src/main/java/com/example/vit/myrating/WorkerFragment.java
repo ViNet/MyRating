@@ -212,9 +212,7 @@ public class WorkerFragment extends Fragment {
                 }
 
             } catch (ClientProtocolException e) {
-                // TODO Auto-generated catch block
             } catch (IOException e) {
-                // TODO Auto-generated catch block
             } finally {
                 httpclient.getConnectionManager().closeExpiredConnections();
             }

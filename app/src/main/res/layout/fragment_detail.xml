@@ -22,10 +22,26 @@
         android:paddingTop="10dp"
         android:id="@+id/tvDetailType"/>
 
+    <com.example.vit.myrating.view.PieChart
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="4"
+        android:layout_gravity="center"
+        android:id="@+id/pieChart"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:text="Modules"
+        android:layout_marginTop="10dp"/>
+
     <ListView
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="3dp"
+        android:layout_weight="5"
         android:id="@+id/lvModules"
         android:dividerHeight="10dp"
         android:clickable="false"

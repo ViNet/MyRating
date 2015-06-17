@@ -1,13 +1,14 @@
-package com.example.vit.myrating;
+package com.example.vit.myrating.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+
+import com.example.vit.myrating.R;
 
 /**
  * Created by Vit on 09.06.2015.
@@ -29,7 +30,6 @@ public class ProgressView extends View{
     int numHeight = 0;
     int textMargin = 0;
     int textSize = 0;
-    int progressStrokeWidth = 0;
 
     public ProgressView(Context context) {
         super(context);

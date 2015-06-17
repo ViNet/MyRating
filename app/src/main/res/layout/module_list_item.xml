@@ -63,7 +63,7 @@
         </LinearLayout>
 
 
-        <com.example.vit.myrating.ProgressView
+        <com.example.vit.myrating.view.ProgressView
             android:layout_marginTop="-10dp"
             android:id="@+id/pvModuleMark"
             android:layout_width="match_parent"
