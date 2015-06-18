@@ -9,11 +9,12 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.vit.myrating.R;
+import com.nineoldandroids.animation.ValueAnimator;
 
 /**
  * Created by Vit on 09.06.2015.
  */
-public class ProgressView extends View{
+public class ProgressView extends View {
 
     static final String TAG = "myrating";
     static final String CLASS = ProgressView.class.getSimpleName() + ": ";
@@ -49,8 +50,6 @@ public class ProgressView extends View{
         calculateDimens(canvas.getHeight(), canvas.getWidth());
         drawScale(canvas);
         drawProgressLine(canvas);
-
-
     }
 
     @Override
@@ -58,14 +57,28 @@ public class ProgressView extends View{
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-    public void setProgress(int value){
+    public void setProgress(int value) {
+
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, value);
+        valueAnimator.setDuration(2000);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                Float value = (Float) animation.getAnimatedValue();
+                Log.d(TAG, CLASS + " animated value = " + value);
+                progressLine = value / 100.0f;
+                requestLayout();
+                invalidate();
+            }
+        });
+
+        valueAnimator.start();
+
         Log.d(TAG, CLASS + "setProgress() value = " + value);
-        this.progressLine = value/100.0f;
-        requestLayout();
-        invalidate();
+
     }
 
-    private void initTools(){
+    private void initTools() {
         linePaint = new Paint();
         linePaint.setColor(Color.BLACK);
 
@@ -74,10 +87,10 @@ public class ProgressView extends View{
         textPaint.setTextAlign(Paint.Align.CENTER);
 
         progressPaint = new Paint();
-        progressPaint.setColor(getResources().getColor(R.color.orange));
+        progressPaint.setColor(getResources().getColor(R.color.light_blue));
     }
 
-    private void drawScale(Canvas canvas){
+    private void drawScale(Canvas canvas) {
         int width = canvas.getWidth();
         int height = canvas.getHeight();
         linePaint.setStrokeWidth(scaleStrokeWidth);
@@ -98,20 +111,19 @@ public class ProgressView extends View{
         canvas.drawText("100", width - indent, numHeight, textPaint);
     }
 
-    private void drawProgressLine(Canvas canvas){
-        int maxWidth = canvas.getWidth() - 2*indent - 2*scaleStrokeWidth;
+    private void drawProgressLine(Canvas canvas) {
+        int maxWidth = canvas.getWidth() - 2 * indent - 2 * scaleStrokeWidth;
         int height = canvas.getHeight();
 
-        progressPaint.setStrokeWidth(graphHeight/2);
-
+        progressPaint.setStrokeWidth(graphHeight / 2);
         canvas.drawLine(indent + scaleStrokeWidth
-                , height - scaleStrokeWidth - graphHeight/3
+                , height - scaleStrokeWidth - graphHeight / 3
                 , maxWidth * this.progressLine
-                , height - scaleStrokeWidth - graphHeight/3
+                , height - scaleStrokeWidth - graphHeight / 3
                 , progressPaint);
     }
 
-    private void calculateDimens(int height, int width){
+    private void calculateDimens(int height, int width) {
         this.scaleStrokeWidth = 2;
         this.graphHeight = (height * 3) / 5;
         this.numHeight = (height * 2) / 5;

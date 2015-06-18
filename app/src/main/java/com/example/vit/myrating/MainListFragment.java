@@ -191,8 +191,6 @@ public class MainListFragment extends Fragment implements SwipeRefreshLayout.OnR
             } else {
                 return getResources().getColor(R.color.red);
             }
-
-
         }
     }
 

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.example.vit.myrating.view.PieSliceData;
 import com.example.vit.myrating.view.PieChart;
 import com.example.vit.myrating.view.ProgressView;
+import com.nineoldandroids.animation.ValueAnimator;
 
 import java.util.ArrayList;
 import java.util.List;
